@@ -21,6 +21,10 @@ BIDS_PATH_PATTERN = [
 ]
 
 # MRI Templates
+if 'PYTHONPATH' not in os.environ:
+    print('Please, set up PYTHONPATH to the root of this project.')
+    exit()
+
 repo_home = os.environ.get('PYTHONPATH')
 labels_registration = os.path.join(repo_home, 'data', 'labels_classes_priors', 'label_list_registration.npy')
 
@@ -45,14 +49,10 @@ if not BIDS_DIR: raise ValueError("Please, specify environment variable DB")
 if BIDS_DIR[-1] == '/': BIDS_DIR = BIDS_DIR[:-1]
 ROOT_DIR = os.path.dirname(BIDS_DIR)
 USLR_DIR = os.path.join(ROOT_DIR, 'uslr')
-USLR_BASE_DIR = os.path.join(ROOT_DIR, 'uslr-baseline')
-DERIVATIVES_DIR = os.path.join(ROOT_DIR, 'derivatives')
-RESULTS_DIR = os.path.join(ROOT_DIR, 'results_new')
-LOGS_DIR = os.path.join(ROOT_DIR, 'logs')
+RESULTS_DIR = os.path.join(ROOT_DIR, 'results')
 TMP_DIR = os.path.join(ROOT_DIR, 'tmp')
 
 if not os.path.exists(RESULTS_DIR): os.makedirs(RESULTS_DIR)
-if not os.path.exists(LOGS_DIR): os.makedirs(LOGS_DIR)
 if not os.path.exists(TMP_DIR): os.makedirs(TMP_DIR)
 
 DIR_PIPELINES = {
@@ -63,14 +63,6 @@ DIR_PIPELINES = {
     'nonlin-l2': os.path.join(USLR_DIR, 'nonlin-l2'),
     'nonlin-bch-l1': os.path.join(USLR_DIR, 'nonlin-bch-l1'),
     'nonlin-bch-l2': os.path.join(USLR_DIR, 'nonlin-bch-l2'),
-    'subject-mni': os.path.join(USLR_DIR, 'subject-mni'),
-    'lin-reverse': os.path.join(USLR_DIR, 'lin-reverse'),
-    'multi-atlas': os.path.join(DERIVATIVES_DIR, 'multi-atlas'),
-    'ants': os.path.join(DERIVATIVES_DIR, 'ants'),
-    'baseline-template': os.path.join(DERIVATIVES_DIR, 'baseline-template'),
-    'baseline-template-lin': os.path.join(DERIVATIVES_DIR, 'baseline-template-lin'),
-    'freesurfer-long': os.path.join(DERIVATIVES_DIR, 'freesurfer-long'),
-
 }
 
 DESC_PIPELINES = {
@@ -81,13 +73,6 @@ DESC_PIPELINES = {
     'nonlin-l2': 'USRL non-linear registration stream',
     'nonlin-bch-l1': 'USRL non-linear registration stream',
     'nonlin-bch-l2': 'USRL non-linear registration stream',
-    'subject-mni': 'Subject-space registered to MNI',
-    'multi-atlas': 'Longitudinal segmentation using multi-atlas approach',
-    'ants': 'Longitudinal segmentation using ants unbiased template',
-    'baseline-template': 'Simple approach using baseline timepoint as template',
-    'baseline-template-lin': 'Simple approach using baseline timepoint as template',
-    'freesurfer-long': 'Freesurfer longitudinal pipeline',
-    'lin-reverse': 'Reverse lin order for test-retest',
 }
 
 for d, d_str in DESC_PIPELINES.items():
@@ -108,17 +93,11 @@ for d, d_str in DESC_PIPELINES.items():
 # if VERBOSE:
 if 'USLR_RUNNING' not in os.environ:
     os.system('cls' if os.name == 'nt' else 'clear')
-    # print('\n')
     print('          o')
-    # print('         ooo')
     print('        ooooo')
-    # print('       ooooooo')
     print('      ooooooooo')
-    # print('     ooooooooooo')
     print('    ooooooooooooo')
-    # print('   ooooooooooooooo')
     print('  ooooooooooooooooo')
-    # print(' ooooooooooooooooooo')
     print('ooooooooooooooooooooo')
     print('')
     print('Running USLR Pipeline')
@@ -130,7 +109,6 @@ if 'USLR_RUNNING' not in os.environ:
     if 'FREESURFER_SYNTHMORPH_HOME' in os.environ:
         subprocess.call(["bash", '-c', 'export FREESURFER_HOME=$FREESURFER_SYNTHMORPH_HOME'])
         subprocess.call(["bash", '-c', 'source $FREESURFER_HOME/SetUpFreeSurfer.sh'])
-        # subprocess.call(['source', '$FREESURFER_SYNTHMORPH_HOME/SetUpFreeSurfer.sh'])
         print('- Freesurfer version for seg/reg is ' + os.environ['FREESURFER_SYNTHMORPH_HOME'])
 
     elif 'FREESURFER_HOME' in os.environ:
@@ -144,7 +122,6 @@ if 'USLR_RUNNING' not in os.environ:
 
     print('- DATASET USED ($BIDS_DIR): ' + BIDS_DIR)
     print('- USLR DIR: ' + USLR_DIR)
-    print('- DERIVATIVES_DIR: ' + DERIVATIVES_DIR)
     print('- RESULTS DIR: ' + RESULTS_DIR)
     print('')
     print('ooooooooooooooooooooo')
